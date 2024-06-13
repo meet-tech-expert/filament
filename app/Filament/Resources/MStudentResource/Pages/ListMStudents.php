@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Filament\Resources\MStudentResource\Pages;
+
+use App\Filament\Resources\MStudentResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
+
+class ListMStudents extends ListRecords
+{
+    protected static string $resource = MStudentResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
+}
