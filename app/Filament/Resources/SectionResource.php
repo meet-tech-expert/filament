@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MSectionResource\Pages;
-use App\Filament\Resources\MSectionResource\RelationManagers;
-use App\Models\MSection;
+use App\Filament\Resources\SectionResource\Pages;
+use App\Filament\Resources\SectionResource\RelationManagers;
+use App\Models\Section;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class MSectionResource extends Resource
+class SectionResource extends Resource
 {
-    protected static ?string $model = MSection::class;
+    protected static ?string $model = Section::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -56,9 +56,9 @@ class MSectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMSections::route('/'),
-            'create' => Pages\CreateMSection::route('/create'),
-            'edit' => Pages\EditMSection::route('/{record}/edit'),
+            'index' => Pages\ListSections::route('/'),
+            'create' => Pages\CreateSection::route('/create'),
+            'edit' => Pages\EditSection::route('/{record}/edit'),
         ];
     }
 }

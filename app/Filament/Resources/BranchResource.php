@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MClassResource\Pages;
-use App\Filament\Resources\MClassResource\RelationManagers;
-use App\Models\MClass;
+use App\Filament\Resources\BranchResource\Pages;
+use App\Filament\Resources\BranchResource\RelationManagers;
+use App\Models\Branch;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class MClassResource extends Resource
+class BranchResource extends Resource
 {
-    protected static ?string $model = MClass::class;
+    protected static ?string $model = Branch::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -56,9 +56,9 @@ class MClassResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMClasses::route('/'),
-            'create' => Pages\CreateMClass::route('/create'),
-            'edit' => Pages\EditMClass::route('/{record}/edit'),
+            'index' => Pages\ListBranches::route('/'),
+            'create' => Pages\CreateBranch::route('/create'),
+            'edit' => Pages\EditBranch::route('/{record}/edit'),
         ];
     }
 }
