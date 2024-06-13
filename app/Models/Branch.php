@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MStudent extends Model
+class Branch extends Model
 {
     use HasFactory;
+
+    protected $table = "m_branches";
 }

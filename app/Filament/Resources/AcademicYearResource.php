@@ -40,8 +40,8 @@ class AcademicYearResource extends Resource
                 Forms\Components\Select::make('status')
                     ->label('Status')
                     ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
+                        '1' => 'Active',
+                        '0' => 'Inactive',
                     ])
                     ->required(),
             ]);
@@ -58,8 +58,8 @@ class AcademicYearResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')->options([
-                 'active' => 'Active',
-                  'inactive' => 'Inactive',
+                 '1' => 'Active',
+                  '0' => 'Inactive',
                 ]),
             ])
             ->actions([

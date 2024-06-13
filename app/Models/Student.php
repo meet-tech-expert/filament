@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MSection extends Model
+class Student extends Model
 {
     use HasFactory;
+
+    protected $table = "m_students";
+
 }

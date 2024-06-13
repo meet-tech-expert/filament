@@ -23,7 +23,7 @@ class BranchResource extends Resource
     {
         return $form
             ->schema([
-                //
+                
             ]);
     }
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('class_id')->comment('class');
             $table->string('branch_name',50);
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(1)->comment('1: Active ,0: Inactive');
             $table->unsignedBigInteger('added_by');
             $table->unsignedBigInteger('updated_by');
             $table->timestamps();

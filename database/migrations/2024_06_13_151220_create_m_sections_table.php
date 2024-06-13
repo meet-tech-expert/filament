@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('class_id')->comment('class');
             $table->text('section',10);
             $table->string('short_name',20);
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(1)->comment('1: Active ,0: Inactive');
             $table->unsignedBigInteger('added_by');
             $table->unsignedBigInteger('updated_by');
             $table->timestamps();

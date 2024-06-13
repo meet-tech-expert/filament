@@ -11,12 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('academic_years', function (Blueprint $table) {
+        Schema::create('m_academic_years', function (Blueprint $table) {
             $table->id(); 
             $table->date('from_date');
             $table->date('to_date');
-            $table->enum('status', ['active', 'inactive']); 
-            $table->timestamps(); 
+            $table->tinyInteger('status')->default(1)->comment('1: Active ,0: Inactive');
+            $table->unsignedBigInteger('added_by');
+            $table->unsignedBigInteger('updated_by');
+            $table->timestamps();
+            $table->softDeletes();
+        
+            // Foreign key constraints
+            $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('updated_by')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
@@ -25,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('academic_years');
+        Schema::dropIfExists('m_academic_years');
     }
 };
