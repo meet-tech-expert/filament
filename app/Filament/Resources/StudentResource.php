@@ -23,7 +23,7 @@ class StudentResource extends Resource
     {
         return $form
             ->schema([
-                //
+               
             ]);
     }
 

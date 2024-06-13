@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ClassResource\Pages;
-use App\Filament\Resources\ClassResource\RelationManagers;
-use App\Models\Class;
+use App\Filament\Resources\ClassMasterResource\Pages;
+use App\Filament\Resources\ClassMasterResource\RelationManagers;
+use App\Models\ClassMaster;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClassResource extends Resource
+class ClassMasterResource extends Resource
 {
-    protected static ?string $model = Class::class;
+    protected static ?string $model = ClassMaster::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -56,9 +56,9 @@ class ClassResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListClasses::route('/'),
-            'create' => Pages\CreateClass::route('/create'),
-            'edit' => Pages\EditClass::route('/{record}/edit'),
+            'index' => Pages\ListClassMasters::route('/'),
+            'create' => Pages\CreateClassMaster::route('/create'),
+            'edit' => Pages\EditClassMaster::route('/{record}/edit'),
         ];
     }
 }
