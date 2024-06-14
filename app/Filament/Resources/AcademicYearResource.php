@@ -18,11 +18,9 @@ use App\Rules\FromDateBeforeToDate;
 class AcademicYearResource extends Resource
 {
     protected static ?string $model = AcademicYear::class;
-
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Academic Year';
     protected static ?int $navigationSort = 1;
-
     //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -44,11 +42,16 @@ class AcademicYearResource extends Resource
                     ->required()
                     ->afterOrEqual('from_date'),
                 Forms\Components\Select::make('status')
-                    ->label('Status')
                     ->options([
-                        '1' => 'Active',
-                        '0' => 'Inactive',
+                        1 => 'Active',
+                        0 => 'Inactive',
                     ])
+                    ->required(),
+                Forms\Components\Select::make('added_by')
+                    ->relationship('addedBy', 'name')
+                    ->required(),
+                Forms\Components\Select::make('updated_by')
+                    ->relationship('updatedBy', 'name')
                     ->required(),
             ]);
     }

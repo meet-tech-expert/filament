@@ -2,17 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\StudentResource\Pages;
-use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\BelongsToSelect;
+use Filament\Tables\Columns\DateTimeColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Tabs;
+use Filament\Tables\Columns;
+use Filament\Tables\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,14 +23,14 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Filament\Resources\StudentResource\RelationManagers;
+use App\Filament\Resources\StudentResource\Pages as StudentPages;
 
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
-
     protected static ?string $navigationGroup = 'Students';
     protected static ?string $navigationLabel = 'Student';
-
     protected static ?int $navigationSort = 1;
 
     //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -154,7 +155,7 @@ class StudentResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
+       return $table
             ->columns([
                 //
             ])
@@ -162,13 +163,136 @@ class StudentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+               
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+               
             ]);
+
+        // return $table
+        //     ->columns([
+        //         TextColumn::make('first_name')
+        //             ->label('First Name'),
+
+        //         TextColumn::make('middle_name')
+        //             ->label('Middle Name'),
+
+        //         TextColumn::make('last_name')
+        //             ->label('Last Name'),
+
+        //         BelongsToSelect::make('academic_id')
+        //             ->label('Academic Year')
+        //             ->relationship('academicYear', 'from_date'),
+
+        //         TextColumn::make('gender')
+        //             ->label('Gender')
+        //             ->format(function ($value) {
+        //                 return $value == 1 ? 'Male' : ($value == 2 ? 'Female' : 'TransGender');
+        //             })
+        //             ->searchable()
+        //             ->sortable(),
+        //         TextColumn::make('enroll_no')
+        //             ->label('Enrollment Number'),
+
+        //         TextColumn::make('roll_no')
+        //             ->label('Roll Number'),
+
+        //         TextColumn::make('admission_type')
+        //             ->label('Admission Type')
+        //             ->getValue(function ($value) {
+        //                 return $value == 1 ? 'New' : 'Old';
+        //             }),
+
+        //         TextColumn::make('medium')
+        //             ->label('Medium')
+        //             ->getValue(function ($value) {
+        //                 return $value == 1 ? 'English' : 'Hindi';
+        //             }),
+
+        //         BelongsToSelect::make('class_id')
+        //             ->label('Class')
+        //             ->relationship('class', 'class'),
+
+        //         BelongsToSelect::make('branch_id')
+        //             ->label('Branch')
+        //             ->relationship('branch', 'branch_name'),
+
+        //         BelongsToSelect::make('sec_id')
+        //             ->label('Section')
+        //             ->relationship('section', 'section'),
+
+        //         TextColumn::make('email')
+        //             ->label('Email'),
+
+        //         TextColumn::make('dob')
+        //             ->label('Date of Birth')
+        //             ->getValue(function ($value) {
+        //                 return date('d-M-Y', strtotime($value));
+        //             }),
+
+        //         TextColumn::make('date_admission')
+        //             ->label('Date of Admission')
+        //             ->getValue(function ($value) {
+        //                 return date('d-M-Y', strtotime($value));
+        //             }),
+
+        //         TextColumn::make('aadhaar')
+        //             ->label('Aadhaar Number'),
+
+        //         TextColumn::make('blood_group')
+        //             ->label('Blood Group')
+        //             ->getValue(function ($value) {
+        //                 $bloodGroups = [
+        //                     '1' => 'A Negative',
+        //                     '2' => 'A Positive',
+        //                     '3' => 'B Negative',
+        //                     '4' => 'B Positive',
+        //                     '5' => 'AB Negative',
+        //                     '6' => 'AB Positive',
+        //                     '7' => 'O Negative',
+        //                     '8' => 'O Positive',
+        //                     '99' => 'Other',
+        //                 ];
+        //                 return isset($bloodGroups[$value]) ? $bloodGroups[$value] : 'Unknown';
+        //             }),
+
+        //         TextColumn::make('remarks')
+        //             ->label('Remarks'),
+
+        //         TextColumn::make('hobbies')
+        //             ->label('Hobbies'),
+
+        //         TextColumn::make('status')
+        //             ->label('Status')
+        //             ->getValue(function ($value) {
+        //                 return $value == 1 ? 'Active' : 'Inactive';
+        //             }),
+
+        //         TextColumn::make('addedByUser.name')
+        //             ->label('Added By'),
+
+        //         TextColumn::make('updatedByUser.name')
+        //             ->label('Updated By'),
+
+        //         DateTimeColumn::make('created_at')
+        //             ->label('Created At'),
+
+        //         DateTimeColumn::make('updated_at')
+        //             ->label('Updated At'),
+        //     ])
+        //     ->filters([
+        //         //
+        //     ])
+        //     ->actions([
+        //         Actions\EditAction::make(),
+        //     ])
+        //     ->bulkActions([
+        //         Actions\BulkActionGroup::make([
+        //             Actions\DeleteBulkAction::make(),
+        //         ]),
+        //     ]);
+
+
     }
 
     public static function getRelations(): array
@@ -181,9 +305,9 @@ class StudentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStudents::route('/'),
-            'create' => Pages\CreateStudent::route('/create'),
-            'edit' => Pages\EditStudent::route('/{record}/edit'),
+            'index' => StudentPages\ListStudents::route('/'),
+            'create' => StudentPages\CreateStudent::route('/create'),
+            'edit' => StudentPages\EditStudent::route('/{record}/edit'),
         ];
     }
 }

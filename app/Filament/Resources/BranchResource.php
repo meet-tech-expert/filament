@@ -2,21 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BranchResource\Pages;
-use App\Filament\Resources\BranchResource\RelationManagers;
 use App\Models\Branch;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns;
+use Filament\Tables\Actions;
+use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Pages;
+use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\BranchResource\Pages as BranchPages;
 
 class BranchResource extends Resource
 {
     protected static ?string $model = Branch::class;
-
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Branch';
     protected static ?int $navigationSort = 3;
@@ -26,7 +27,32 @@ class BranchResource extends Resource
     {
         return $form
             ->schema([
-                
+                BelongsToSelect::make('class_id')
+                    ->label('Class')
+                    ->relationship('class', 'class')
+                    ->required(),
+
+                TextInput::make('branch_name')
+                    ->label('Branch Name')
+                    ->required(),
+
+                Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        '1' => 'Active',
+                        '0' => 'Inactive',
+                    ])
+                    ->default('1'),
+
+                BelongsToSelect::make('added_by')
+                    ->label('Added By')
+                    ->relationship('addedByUser', 'name')
+                    ->required(),
+
+                BelongsToSelect::make('updated_by')
+                    ->label('Updated By')
+                    ->relationship('updatedByUser', 'name')
+                    ->required(),
             ]);
     }
 
@@ -34,17 +60,44 @@ class BranchResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('class.class')
+                    ->label('Class'),
+
+                TextColumn::make('branch_name')
+                    ->label('Branch Name'),
+
+                
+                 
+                 TextColumn::make('status')
+                    ->label('Status')
+                    ->formatStateUsing(function ($state) {
+                        return $state == '1' ? 'Active' : 'Inactive';
+                    }),
+
+
+                TextColumn::make('addedByUser.name')
+                    ->label('Added By'),
+
+                TextColumn::make('updatedByUser.name')
+                    ->label('Updated By'),
+
+                TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime(),
+
+                TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -59,9 +112,9 @@ class BranchResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBranches::route('/'),
-            'create' => Pages\CreateBranch::route('/create'),
-            'edit' => Pages\EditBranch::route('/{record}/edit'),
+            'index' => BranchPages\ListBranches::route('/'),
+            'create' => BranchPages\CreateBranch::route('/create'),
+            'edit' => BranchPages\EditBranch::route('/{record}/edit'),
         ];
     }
 }
