@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Rules\FromDateBeforeToDate;
+use Filament\Forms\Components\Section;
 
 
 class AcademicYearResource extends Resource
@@ -27,6 +28,7 @@ class AcademicYearResource extends Resource
     {
         return $form
             ->schema([
+                Section::make([ 
                 Forms\Components\TextInput::make('id')
                     ->label('ID')
                     ->required()
@@ -34,25 +36,25 @@ class AcademicYearResource extends Resource
                     ->hidden(),
                 Forms\Components\DatePicker::make('from_date')
                     ->label('From Date')
+                    ->displayFormat('F, Y')
                     ->native(false)
                     ->required(),
                 Forms\Components\DatePicker::make('to_date')
                     ->label('To Date')
+                    ->displayFormat('F, Y')
                     ->native(false)
                     ->required()
                     ->afterOrEqual('from_date'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        1 => 'Active',
-                        0 => 'Inactive',
-                    ])
-                    ->required(),
-                Forms\Components\Select::make('added_by')
-                    ->relationship('addedBy', 'name')
-                    ->required(),
-                Forms\Components\Select::make('updated_by')
-                    ->relationship('updatedBy', 'name')
-                    ->required(),
+                Forms\Components\Toggle::make('status')
+                    ->label('Active')
+                    ->onColor(config('constants.statusIconColor.on.color'))
+                    ->offColor(config('constants.statusIconColor.off.color'))
+                    ->onIcon(config('constants.statusIconColor.on.icon'))
+                    ->offIcon(config('constants.statusIconColor.off.icon'))
+                    // ->helperText("Your full name here, including any middle names.")
+                    ->default(0)
+                    ->inline(), 
+                ])
             ]);
     }
 
