@@ -19,7 +19,11 @@ class AcademicYearResource extends Resource
 {
     protected static ?string $model = AcademicYear::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationLabel = 'Academic Year';
+    protected static ?int $navigationSort = 1;
+
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -32,9 +36,11 @@ class AcademicYearResource extends Resource
                     ->hidden(),
                 Forms\Components\DatePicker::make('from_date')
                     ->label('From Date')
+                    ->native(false)
                     ->required(),
                 Forms\Components\DatePicker::make('to_date')
                     ->label('To Date')
+                    ->native(false)
                     ->required()
                     ->afterOrEqual('from_date'),
                 Forms\Components\Select::make('status')

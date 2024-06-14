@@ -17,7 +17,14 @@ class ClassMasterResource extends Resource
 {
     protected static ?string $model = ClassMaster::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationLabel = 'Class';
+    protected static ?string $pluralModelLabel = 'Class';
+   //protected static bool $hasTitleCaseModelLabel = false;
+
+    protected static ?int $navigationSort = 2;
+
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {

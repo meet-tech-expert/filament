@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('last_name', 200);
             $table->unsignedBigInteger('academic_id')->comment('Academic');
             $table->tinyInteger('gender')->default(1)->comment('1: Male, 2: Female,99: TransGender');
-            $table->string('enroll_no', 200)->unique();
+            $table->string('enroll_no', 200)->unique()->comment('stu_{yymm}{id}');
             $table->bigInteger('roll_no')->nullable();
             $table->tinyInteger('admission_type')->default(1)->comment('1: New, 2: old');
             $table->tinyInteger('medium')->default(1)->comment('1: English, 2: Hindi');
@@ -28,11 +28,11 @@ return new class extends Migration
             $table->string('email', 200)->nullable();
             $table->date('dob');
             $table->date('date_admission'); 
-            $table->string('aadhaar', 12)->nullable(); 
+            $table->string('aadhaar', 14)->nullable(); 
             $table->tinyInteger('blood_group')->default(1)->comment('1: A Negative, 2: A Positive, 3: B Negative, 4: B Positive, 5: AB Negative, 6: AB Positive, 7: O Negative, 8: O Positive, 99: OTHER');
             $table->text('remarks')->nullable();
             $table->string('hobbies', 200)->nullable();
-            $table->tinyInteger('status')->default(1)->comment('1: Active ,0: Inactive');
+            $table->tinyInteger('status')->default(1)->comment('0: Inactive, 1: Active , 2: Discontinued, 3: Relieved');
             $table->unsignedBigInteger('added_by');
             $table->unsignedBigInteger('updated_by');
             $table->timestamps();
