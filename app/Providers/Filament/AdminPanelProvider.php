@@ -63,6 +63,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->icon('heroicon-c-cog')
                     ->collapsed(),
+                NavigationGroup::make()
+                    ->label('User Management')
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->collapsed(),    
             ])
             // ->navigationItems([
             //     NavigationItem::make('About us')

@@ -38,11 +38,13 @@ class AcademicYearResource extends Resource
                     ->label('From Date')
                     ->displayFormat('F, Y')
                     ->native(false)
+                    ->closeOnDateSelection()
                     ->required(),
                 Forms\Components\DatePicker::make('to_date')
                     ->label('To Date')
                     ->displayFormat('F, Y')
                     ->native(false)
+                    ->closeOnDateSelection()
                     ->required()
                     ->afterOrEqual('from_date'),
                 Forms\Components\Toggle::make('status')

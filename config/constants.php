@@ -3,7 +3,7 @@ return [
     'typeGender' => [
             1       => 'Male',
             2       => 'Female',
-            99      => 'TransGender',
+            //3       => 'TransGender',
     ],
     'typeStatus' => [
             1       => 'Active',
@@ -26,14 +26,14 @@ return [
             4 => "Relieved",
     ],
     'typeBlood'  => [
-        1 => "A Negative",
-        2 => "A Positive",
-        3 => "B Negative",
-        4 => "B Positive",
-        5 => "AB Negative",
-        6 => "AB Positive",
-        7 => "O Negative",
-        8 => "O Positive",
+        1 => "A-",
+        2 => "A+",
+        3 => "B-",
+        4 => "B+",
+        5 => "AB-",
+        6 => "AB+",
+        7 => "O-",
+        8 => "O+",
         99 => "OTHER",
     ],
     'typeReligion'  => [
@@ -79,5 +79,12 @@ return [
         2 => "B",
         3 => "C",
     ], 
+    'typeCaste'  => [
+        1 => "General",
+        2 => "OBC",
+        3 => "SC",
+        4 => "ST",
+        99 => "OTHER",
+    ],
 
 ];
