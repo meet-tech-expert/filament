@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Student extends Model
+class Student extends Model implements HasMedia
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,InteractsWithMedia;
 
     protected $table = "m_students";
 
@@ -22,14 +24,17 @@ class Student extends Model
         'roll_no',
         'admission_type',
         'medium',
-        'class_id',
+        'classid',
         'branch_id',
         'sec_id',
         'email',
         'dob',
         'date_admission',
         'aadhaar',
+        'pen',
         'blood_group',
+        'contact_no',
+        'phy_challanged',
         'remarks',
         'hobbies',
         'status',
@@ -44,9 +49,9 @@ class Student extends Model
 
     public function class()
     {
-        return $this->belongsTo(ClassMaster::class, 'class_id');
+        return $this->belongsTo(ClassMaster::class, 'classid');
     }
-
+    
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');

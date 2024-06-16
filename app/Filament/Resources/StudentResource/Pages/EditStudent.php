@@ -4,6 +4,8 @@ namespace App\Filament\Resources\StudentResource\Pages;
 
 use App\Filament\Resources\StudentResource;
 use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditStudent extends EditRecord
@@ -15,5 +17,16 @@ class EditStudent extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+    protected function getSavedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Student updated.')
+            ->body('The Student has been updated successfully.');
     }
 }

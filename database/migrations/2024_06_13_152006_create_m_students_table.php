@@ -21,8 +21,8 @@ return new class extends Migration
             $table->bigInteger('roll_no')->nullable();
             $table->tinyInteger('admission_type')->default(1)->comment('1: New, 2: old');
             $table->tinyInteger('medium')->default(1)->comment('1: English, 2: Hindi');
-            $table->unsignedBigInteger('class_id')->comment('class');
-            $table->unsignedBigInteger('branch_id')->comment('Branch');
+            $table->unsignedBigInteger('classid')->comment('class');
+            $table->unsignedBigInteger('branch_id')->nullable()->comment('Branch');
             $table->unsignedBigInteger('sec_id')->comment('Section');
             $table->string('email', 200)->nullable();
             $table->date('dob');
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->softDeletes();
         
             // Foreign key constraints
-            $table->foreign('class_id')->references('id')->on('m_classes');
+            $table->foreign('classid')->references('id')->on('m_classes');
             $table->foreign('branch_id')->references('id')->on('m_branches');
             $table->foreign('sec_id')->references('id')->on('m_sections');
             $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete();
