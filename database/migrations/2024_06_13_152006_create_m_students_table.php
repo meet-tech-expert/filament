@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('email', 200)->nullable();
             $table->date('dob');
             $table->date('date_admission'); 
+            $table->bigInteger('contact_no')->nullable();
             $table->string('aadhaar', 14)->nullable(); 
             $table->tinyInteger('blood_group')->default(1)->comment('1: A-, 2: A+, 3: B-, 4: B+, 5: AB-, 6: AB+, 7: O-, 8: O+, 99: OTHER');
             $table->text('remarks')->nullable();
@@ -43,7 +44,6 @@ return new class extends Migration
             $table->foreign('class_id')->references('id')->on('m_classes');
             $table->foreign('branch_id')->references('id')->on('m_branches');
             $table->foreign('sec_id')->references('id')->on('m_sections');
-            $table->foreign('academic_id')->references('id')->on('m_academic_years');
             $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('updated_by')->references('id')->on('users')->cascadeOnDelete();
         });

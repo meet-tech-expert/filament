@@ -17,7 +17,6 @@ class Student extends Model
         'first_name',
         'middle_name',
         'last_name',
-        'academic_id',
         'gender',
         'enroll_no',
         'roll_no',

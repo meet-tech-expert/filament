@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Models\Student;
 use App\Models\ClassMaster;
+use App\Models\Branch;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
@@ -21,11 +22,18 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Filament\Resources\StudentResource\Pages as StudentPages;
+use Closure;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
+use Filament\Support\RawJs;
 
 class StudentResource extends Resource
 {
@@ -43,7 +51,7 @@ class StudentResource extends Resource
                     Tabs::make('Tabs')
                     ->tabs([
                         Tabs\Tab::make('Student Details')
-                            // ->icon('heroicon-o-credit-card')
+                            ->icon('heroicon-o-user')
                             ->schema([
                                 Section::make([
                                     TextInput::make('enroll_no')
@@ -55,13 +63,15 @@ class StudentResource extends Resource
                                     TextInput::make('first_name')
                                         ->placeholder('First Name')
                                         ->required()
+                                        //->hidden(fn (Get $get): bool => ! $get('is_company'))
                                         ->maxLength(200),
                                     Select::make('class')
-                                        ->options(config('constants.typeClassCode'))
-                                        //->options(ClassMaster::all()->pluck('class'))
+                                        ->options(ClassMaster::all()->where('status',1)->pluck('class','id'))
+                                        ->afterStateUpdated(fn (Set $set, ?string $state) => $set('branch', ''))
                                         ->native(false)
                                         ->required()
                                         ->searchable()
+                                        ->live()
                                         ->preload(),
                                     Radio::make('gender')
                                         ->options(config('constants.typeGender'))
@@ -90,7 +100,15 @@ class StudentResource extends Resource
                                         ->label('Student Email')
                                         ->email()
                                         ->placeholder('xyz@domain.com'),    
-
+                                    TextInput::make('contact_no')
+                                        ->label('Contact Number')
+                                        ->prefix('+91')
+                                        ->tel()
+                                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+                                        ->minValue(10)
+                                        ->maxValue(10)
+                                        ->placeholder('Contact Number'), 
+                                        
                                 ])->compact()->columnSpan(1),
                                 Section::make([
                                     Select::make('academic_id')
@@ -101,12 +119,15 @@ class StudentResource extends Resource
                                             3 => 'April 2022 - March 2023'
                                             ])
                                         ->native(false)
+                                        ->disabledOn('edit')
                                         ->required(),
                                     TextInput::make('middle_name')
                                         ->placeholder('Middle Name')
                                         ->maxLength(50),
                                     Select::make('branch')
-                                        ->options(config('constants.typeClassCode'))
+                                        ->options(fn (Get $get): array => Branch::all()
+                                        ->where('class_id', $get('class'))
+                                        ->pluck('branch_name', 'id')->all())
                                         ->native(false)
                                         ->searchable()
                                         ->preload(),
@@ -187,7 +208,7 @@ class StudentResource extends Resource
 
                             ])->columns(3),
                         Tabs\Tab::make('Personal Information')
-                            //->icon('heroicon-o-globe-alt')
+                            ->icon('heroicon-o-square-3-stack-3d')
                             ->schema([
                                 Section::make([
                                     TextInput::make('nationality')
@@ -202,7 +223,11 @@ class StudentResource extends Resource
                                     Textarea::make('alergic_to')
                                         ->rows(2)
                                         ->cols(10)
-                                        ->placeholder('e.g. Sneezing, Runny nose, Vomiting'),    
+                                        ->placeholder('e.g. Sneezing, Runny nose, Vomiting'),
+                                    TextInput::make('birth_place')
+                                        ->label('Birth Place')
+                                        ->placeholder('Birth Place')
+                                        ->maxLength(200), 
                                 ])->compact()->columnSpan(1),
                                 Section::make([
                                     Select::make('religion')
@@ -243,19 +268,159 @@ class StudentResource extends Resource
                                 ])->compact()->columnSpan(1)
                             ])->columns(3),
                         Tabs\Tab::make('Address')
-                            //->icon('heroicon-o-globe-alt')
+                            ->icon('heroicon-o-envelope')
                             ->schema([
-                                //start added field here
-                            ]),
+                                Section::make('Current Address')
+                                ->schema([
+                                    Textarea::make('cur_address')
+                                        ->label('Address')
+                                        ->rows(2)
+                                        ->cols(5)
+                                        ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                        ->placeholder('Current Address'),
+                                    Select::make('cur_state')
+                                        ->label('State')
+                                        ->options(config('constants.indianStates'))
+                                        ->native(false)
+                                        ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                        ->searchable()
+                                        ->preload(),
+                                    TextInput::make('cur_city')
+                                        ->label('City')
+                                        ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                        ->placeholder('City'), 
+                                    TextInput::make('cur_zip')
+                                        ->label('Zip Code')
+                                        ->numeric()
+                                        ->maxLength(6)
+                                        ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                        ->placeholder('Zip Code'),     
+                                ])->compact()->columnSpan(1),
+                                
+                                Section::make('Permanent Address')
+                                    ->schema([
+                                        Checkbox::make('same_addr')
+                                            ->label('Same as Current Address?')
+                                            ->afterStateUpdated(
+                                                fn (Set $set, ?string $state, Get $get) => 
+                                                    [
+                                                    $set('per_address', ($state)? $get('cur_address'):'' ),
+                                                    $set('per_state', ($state)? $get('cur_state'):'' ),
+                                                    $set('per_city', ($state)? $get('cur_city'):'' ),
+                                                    $set('per_zip', ($state)? $get('cur_zip'):'' ),
+                                                    ]
+                                                )
+                                            ->live(),
+                                        Textarea::make('per_address')
+                                            ->label('Address')
+                                            ->rows(2)
+                                            ->cols(5)
+                                            ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                            ->placeholder('Permanent Address'),
+                                        Select::make('per_state')
+                                            ->label('State')
+                                            ->options(config('constants.indianStates'))
+                                            ->native(false)
+                                            ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                            ->disableOptionWhen(fn (Get $get): bool => $get('same_addr'))
+                                            ->searchable()
+                                           ->preload(),
+                                        TextInput::make('per_city')
+                                            ->label('City')
+                                            ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                            ->placeholder('City'), 
+                                        TextInput::make('per_zip')
+                                            ->label('Zip Code')
+                                            ->numeric()
+                                            ->maxLength(6)
+                                            ->disabled(fn (Get $get): bool => $get('same_addr'))
+                                            ->placeholder('Zip Code'),     
+                                    ])->compact()->columnSpan(1),
+                            ])->columns(2),
                         Tabs\Tab::make('Parent Details')
-                            //->icon('heroicon-o-globe-alt')
+                            ->icon('heroicon-o-sun')
                             ->schema([
-                                //start added field here
-                            ]),
+                                Section::make('Father Details')
+                                ->schema([
+                                    TextInput::make('father_name')
+                                        ->label('Name')
+                                        ->maxLength(200)
+                                        ->placeholder('Father Name'), 
+                                    TextInput::make('f_mobile')
+                                        ->label('Mobile')
+                                        ->prefix('+91')
+                                        ->tel()
+                                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+                                        ->minValue(10)
+                                        ->maxValue(10)
+                                        ->placeholder('Father Mobile'),
+                                    TextInput::make('f_aadhaar')
+                                        ->label('Aadhaar No')
+                                        ->mask('9999-9999-9999')
+                                        ->placeholder('xxxx-xxxx-xxxx'),
+                                    TextInput::make('f_education')
+                                        ->label('Education')
+                                        ->maxLength(100)
+                                        ->placeholder('Father Education'),
+                                    TextInput::make('f_occupation')
+                                        ->label('Occupation')
+                                        ->maxLength(100)
+                                        ->placeholder('Father Occupation'),
+                                    TextInput::make('f_income')
+                                        ->label('Annual Income')
+                                        ->numeric()
+                                        ->mask(RawJs::make('$money($input)'))
+                                        ->stripCharacters(',')
+                                        ->prefixIcon('heroicon-s-currency-rupee')
+                                        ->placeholder('Father Annual Income'),
+                                    TextInput::make('f_designation')
+                                        ->label('Designation')
+                                        ->maxLength(100)
+                                        ->placeholder('Father Designation'),    
+                                ])->compact()->columnSpan(1),
+                                Section::make('Mother Details')
+                                ->schema([
+                                    TextInput::make('mother_name')
+                                        ->label('Name')
+                                        ->maxLength(200)
+                                        ->placeholder('Mother Name'), 
+                                    TextInput::make('m_mobile')
+                                        ->label('Mobile')
+                                        ->prefix('+91')
+                                        ->tel()
+                                        ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+                                        ->minValue(10)
+                                        ->maxValue(10)
+                                        ->placeholder('Mother Mobile'),
+                                    TextInput::make('m_aadhaar')
+                                        ->label('Aadhaar No')
+                                        ->mask('9999-9999-9999')
+                                        ->placeholder('xxxx-xxxx-xxxx'),
+                                    TextInput::make('m_education')
+                                        ->label('Education')
+                                        ->maxLength(100)
+                                        ->placeholder('Mother Education'),
+                                    TextInput::make('m_occupation')
+                                        ->label('Occupation')
+                                        ->maxLength(100)
+                                        ->placeholder('Mother Occupation'),
+                                    TextInput::make('m_income')
+                                        ->label('Annual Income')
+                                        ->numeric()
+                                        ->mask(RawJs::make('$money($input)'))
+                                        ->stripCharacters(',')
+                                        ->prefixIcon('heroicon-s-currency-rupee')
+                                        ->placeholder('Mother Annual Income'),
+                                    TextInput::make('m_designation')
+                                        ->label('Designation')
+                                        ->maxLength(100)
+                                        ->placeholder('Mother Designation'),
+                                ])->compact()->columnSpan(1),
+                            ])->columns(2),
                     ])->persistTabInQueryString('active-tab'),
                 ])->columns(1);
     }
-
+   
     public static function table(Table $table): Table
     {
        return $table
