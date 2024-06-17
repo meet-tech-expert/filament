@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Auth;
 class AcademicYear extends Model
 {
     use HasFactory,SoftDeletes;
+
     protected $table = 'm_academic_years'; 
-       protected $fillable = [
+
+    protected $fillable = [
         'from_date',
         'to_date',
         'set_primary',

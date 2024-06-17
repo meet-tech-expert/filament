@@ -4,13 +4,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
 
 class ClassMaster extends Model
 {
     use HasFactory,SoftDeletes; 
 
     protected $table = "m_classes";
-
    
     protected $fillable = [
         'academic_id',
@@ -19,7 +20,7 @@ class ClassMaster extends Model
         'short_name',
         'status',
         'added_by',
-        'updated_by',
+        'updated_by', 
     ];
 
     public function academicYear()

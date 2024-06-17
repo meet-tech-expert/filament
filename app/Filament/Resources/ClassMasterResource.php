@@ -5,17 +5,21 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ClassMasterResource\Pages;
 use App\Models\ClassMaster;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\BelongsToSelect;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Section;
+use Illuminate\Support\Facades\Auth;
+use App\Models\AcademicYear;
+
 
 class ClassMasterResource extends Resource
 {
     protected static ?string $model = ClassMaster::class;
-
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Class';
     protected static ?string $pluralModelLabel = 'Class';
@@ -29,38 +33,47 @@ class ClassMasterResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('class')
-                    ->label('Class')
-                    ->required(),
+                Section::make([ 
+                    Forms\Components\TextInput::make('id')
+                        ->label('ID')
+                        ->required()
+                        ->disabled()
+                        ->hidden(),
+                    TextInput::make('class')
+                        ->label('Class')
+                        ->placeholder('Class')
+                        ->required(),
 
-                TextInput::make('class_code')
-                    ->label('Class Code'),
+                    TextInput::make('class_code')
+                        ->label('Class Code')
+                        ->placeholder('Class code'),
 
-                TextInput::make('short_name')
-                    ->label('Short Name'),
+                    TextInput::make('short_name')
+                        ->label('Short Name')
+                        ->placeholder('Short Name'),
 
-                BelongsToSelect::make('academic_id')
-                    ->label('Academic Year')
-                    ->relationship('academicYear', 'from_date')
-                    ->required(),
+                    BelongsToSelect::make('academic_id')
+                        ->label('Academic Year')
+                        ->relationship('academicYear', 'from_date')
+                        ->options(function () {
+                            return AcademicYear::all()->mapWithKeys(function ($academicYear) {
+                                $fromDate = date('F Y', strtotime($academicYear->from_date));
+                                $toDate = date('F Y', strtotime($academicYear->to_date));
+                                $label = "$fromDate - $toDate";
+                                return [$academicYear->getKey() => $label];
+                            })->toArray();
+                        })
+                        ->required(),
 
-                Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        '1' => 'Active',
-                        '0' => 'Inactive',
-                    ])
-                    ->default('1'),
-
-                BelongsToSelect::make('added_by')
-                    ->label('Added By')
-                    ->relationship('addedByUser', 'name')
-                    ->required(),
-
-                BelongsToSelect::make('updated_by')
-                    ->label('Updated By')
-                    ->relationship('updatedByUser', 'name')
-                    ->required(),
+                    Forms\Components\Toggle::make('status')
+                            ->label('Active')
+                            ->onColor(config('constants.statusIconColor.on.color'))
+                            ->offColor(config('constants.statusIconColor.off.color'))
+                            ->onIcon(config('constants.statusIconColor.on.icon'))
+                            ->offIcon(config('constants.statusIconColor.off.icon'))
+                            ->default(1)
+                            ->inline(),   
+                ])
             ]);
     }
 
@@ -78,7 +91,17 @@ class ClassMasterResource extends Resource
                     ->label('Short Name'),
 
                 TextColumn::make('academicYear.from_date')
-                    ->label('Academic Year'),
+                ->label('Academic Year')
+                ->formatStateUsing(function ($record) {
+                    // Assuming $record->academicYear is the related AcademicYear model
+                    if ($record->academicYear) {
+                        $fromDate = date('F Y', strtotime($record->academicYear->from_date));
+                        $toDate = date('F Y', strtotime($record->academicYear->to_date));
+                        return "$fromDate - $toDate";
+                    } else {
+                        return '-';
+                    }
+                }),    
 
                 TextColumn::make('status')
                     ->label('Status')
