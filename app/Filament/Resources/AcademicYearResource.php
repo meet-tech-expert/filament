@@ -54,7 +54,7 @@ class AcademicYearResource extends Resource
                     ->onIcon(config('constants.statusIconColor.on.icon'))
                     ->offIcon(config('constants.statusIconColor.off.icon'))
                     // ->helperText("Your full name here, including any middle names.")
-                    ->default(0)
+                    ->default(1)
                     ->inline(), 
                 ])
             ]);
