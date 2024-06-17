@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('from_date');
             $table->date('to_date');
             $table->tinyInteger('status')->default(1)->comment('1: Active ,0: Inactive');
-            $table->tinyInteger('set_primary')->default(1);
+            $table->tinyInteger('set_primary')->default(0);
             $table->unsignedBigInteger('added_by');
             $table->unsignedBigInteger('updated_by');
             $table->timestamps();

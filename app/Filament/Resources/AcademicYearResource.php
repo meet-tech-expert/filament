@@ -12,8 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Rules\FromDateBeforeToDate;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 
 
 class AcademicYearResource extends Resource
@@ -29,51 +31,56 @@ class AcademicYearResource extends Resource
         return $form
             ->schema([
                 Section::make([ 
-                Forms\Components\TextInput::make('id')
-                    ->label('ID')
-                    ->required()
-                    ->disabled()
-                    ->hidden(),
-                Forms\Components\DatePicker::make('from_date')
-                    ->label('From Date')
-                    ->displayFormat('F, Y')
-                    ->native(false)
-                    ->closeOnDateSelection()
-                    ->required(),
-                Forms\Components\DatePicker::make('to_date')
-                    ->label('To Date')
-                    ->displayFormat('F, Y')
-                    ->native(false)
-                    ->closeOnDateSelection()
-                    ->required()
-                    ->afterOrEqual('from_date'),
-                Forms\Components\Toggle::make('status')
-                    ->label('Active')
-                    ->onColor(config('constants.statusIconColor.on.color'))
-                    ->offColor(config('constants.statusIconColor.off.color'))
-                    ->onIcon(config('constants.statusIconColor.on.icon'))
-                    ->offIcon(config('constants.statusIconColor.off.icon'))
-                    // ->helperText("Your full name here, including any middle names.")
-                    ->default(1)
-                    ->inline(), 
+                    Forms\Components\TextInput::make('id')
+                        ->label('ID')
+                        ->required()
+                        ->disabled()
+                        ->hidden(),
+                    Forms\Components\DatePicker::make('from_date')
+                        ->label('From Date')
+                        ->displayFormat('F, Y') 
+                        ->native(false)
+                        ->closeOnDateSelection()
+                        ->required(),
+                    Forms\Components\DatePicker::make('to_date')
+                        ->label('To Date')
+                        ->displayFormat('F, Y') 
+                        ->native(false)
+                        ->closeOnDateSelection()
+                        ->required()
+                        ->afterOrEqual('from_date'),
+                    Forms\Components\Toggle::make('status')
+                        ->label('Active')
+                        ->onColor(config('constants.statusIconColor.on.color'))
+                        ->offColor(config('constants.statusIconColor.off.color'))
+                        ->onIcon(config('constants.statusIconColor.on.icon'))
+                        ->offIcon(config('constants.statusIconColor.off.icon'))
+                        ->default(1)
+                        ->inline(), 
                 ])
             ]);
+
     }
 
     public static function table(Table $table): Table
     {
-        return $table
+          return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('from_date')->date(),
-                Tables\Columns\TextColumn::make('to_date')->date(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('formatted_from_date')
+                    ->label('From Date'),
+                Tables\Columns\TextColumn::make('formatted_to_date')
+                    ->label('To Date'),
+                Tables\Columns\TextColumn::make('status_label')
+                    ->label('Status'),
+                    
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')->options([
-                 '1' => 'Active',
-                  '0' => 'Inactive',
-                ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        '1' => 'Active',
+                        '0' => 'Inactive',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
