@@ -44,6 +44,10 @@ return [
         4 => "Christian",
         99 => "OTHER",
     ],
+    'typegroup'  => [
+        1 => "Main",
+        2 => "Sub",
+    ],
     'typeMedium'  => [
         1 => "English",
         2 => "Hindi",
