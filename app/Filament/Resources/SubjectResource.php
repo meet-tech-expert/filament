@@ -39,7 +39,7 @@ class SubjectResource extends Resource
                 Section::make([
                     Radio::make('group')
                         ->label('Subject Categories')
-                        ->options(config('constants.typegroup'))
+                        ->options(config('constants.typeGroup'))
                         ->required()
                         ->default(1)
                         ->inline()
