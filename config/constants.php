@@ -8,7 +8,7 @@ return [
     ],
     'typeStatus' => [
             1       => 'Active',
-            2       => 'Inactive',  
+            2       => 'Inactive',
     ],
     'statusIconColor' => [
             'on'    => [
@@ -44,7 +44,7 @@ return [
         4 => "Christian",
         99 => "OTHER",
     ],
-    'typegroup'  => [
+    'typeGroup'  => [
         1 => "Main",
         2 => "Sub",
     ],
@@ -56,7 +56,7 @@ return [
         1 => "Veg",
         2 => "Non Veg",
         3 => "Eggetarian",
-    ],     
+    ],
     'typeAdmission'  => [
         1 => "New",
         2 => "Old",
@@ -83,7 +83,7 @@ return [
         1 => "A",
         2 => "B",
         3 => "C",
-    ], 
+    ],
     'typeCaste'  => [
         1 => "General",
         2 => "OBC",
