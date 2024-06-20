@@ -16,7 +16,7 @@ return new class extends Migration
             $table->tinyInteger('group')->default(1)->comment('1:Main ,2:Sub');
             $table->string('sub_name', 50)->nullable();
             $table->char('sub_code', 5)->nullable();
-            $table->unsignedBigInteger('parent_subject')->nullable();
+            $table->unsignedBigInteger('parent_subject')->default(0);
             $table->tinyInteger('order')->default(1);
             $table->tinyInteger('status')->default(1)->comment('1: Active ,0: Inactive');
             $table->unsignedBigInteger('added_by');
