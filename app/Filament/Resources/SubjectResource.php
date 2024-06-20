@@ -44,6 +44,7 @@ class SubjectResource extends Resource
                         ->default(1)
                         ->inline()
                         ->live()
+                        ->afterStateUpdated(fn (Set $set, ?string $state) => [ ($state == '1') ? $set('parent_subject', ''):''])
                         ->inlineLabel(false),
                     TextInput::make('sub_code')
                             ->maxLength(5)
@@ -54,9 +55,9 @@ class SubjectResource extends Resource
                         ->relationship('parentSubject', 'sub_name')
                         ->nullable()
                         ->visible(fn (Get $get): bool => ($get('group')==2)? true : false)
+                        ->required(fn (Get $get): bool => ($get('group')==2)? true : false)
                         ->searchable()
                         ->preload(),
-
                     TextInput::make('sub_name')
                             ->maxLength(50)
                             ->label('Subject Name')

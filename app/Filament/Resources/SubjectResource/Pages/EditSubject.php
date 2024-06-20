@@ -21,6 +21,7 @@ class EditSubject extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $data['updated_by'] = Auth::id(); 
+        $data['parent_subject'] = (array_key_exists('parent_subject', $data)) ? $data['parent_subject'] : Null;
         return $data;
     }
 
