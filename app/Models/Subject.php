@@ -27,6 +27,6 @@ class Subject extends Model
 
       public function parentSubject()
       {
-        return $this->belongsTo(Subject::class, 'parent_subject')->where('parent_subject',null);
+        return $this->belongsTo(Subject::class, 'parent_subject')->where('parent_subject',null)->where('status','1');
       }
 }
