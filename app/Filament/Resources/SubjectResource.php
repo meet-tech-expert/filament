@@ -19,36 +19,52 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Tables\Columns\BooleanColumn;
 
 
 
 class SubjectResource extends Resource
-{ 
+{
     protected static ?string $model = Subject::class;
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Subject';
-    protected static ?int $navigationSort = 4; 
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make([ 
-                    TextInput::make('id')
-                        ->label('ID')
+                Section::make([
+                    Radio::make('group')
+                        ->label('Subject Categories')
+                        ->options(config('constants.typegroup'))
                         ->required()
-                        ->disabled()
-                        ->hidden(),
+                        ->default(1)
+                        ->inline()
+                        ->live()
+                        ->inlineLabel(false),
+                    TextInput::make('sub_code')
+                            ->maxLength(5)
+                            ->label('Subject Code'),
+                    Select::make('parent_subject')
+                        ->label('Parent Subject')
+                        ->relationship('parentSubject', 'sub_name')
+                        ->nullable()
+                        ->searchable()
+                        ->preload(),
+
                     TextInput::make('sub_name')
                             ->maxLength(50)
                             ->label('Subject Name')
                             ->required(),
-                    TextInput::make('sub_code')
-                            ->maxLength(5)
-                            ->label('Subject Code')
-                            ->required()
-                             ->live(),
+                    TextInput::make('order')
+                            ->default(1)
+                            ->numeric()
+                            ->label('Order')
+                            ->required(),
+
                     Toggle::make('status')
                             ->label('Status')
                             ->onColor(config('constants.statusIconColor.on.color'))
@@ -56,31 +72,12 @@ class SubjectResource extends Resource
                             ->onIcon(config('constants.statusIconColor.on.icon'))
                             ->offIcon(config('constants.statusIconColor.off.icon'))
                             ->default(1)
-                            ->inline(),          
+                            ->inline(),
 
-                ])->compact()->columnSpan(1),
 
-                Section::make([ 
-                    TextInput::make('order')
-                        ->default(1)
-                        ->label('Order')
-                        ->required() 
-                         ->live(),
-                    Radio::make('group')
-                        ->label('Subject Categories')
-                        ->options(config('constants.typegroup'))
-                        ->required()
-                        ->default(1)
-                        ->inline()
-                        ->inlineLabel(false),     
-                    Select::make('parent_subject')
-                        ->label('Parent Subject')
-                        ->relationship('parentSubject', 'sub_name')
-                        ->nullable()
-                        ->searchable()
-                        ->preload(),   
-                ])->compact()->columnSpan(1),
-            ])->columns(2);
+
+                ])->compact()->columns(2),
+            ]);
     }
 
     public static function table(Table $table): Table
