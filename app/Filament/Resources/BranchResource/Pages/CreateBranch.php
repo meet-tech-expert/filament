@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BranchResource\Pages;
 use App\Filament\Resources\BranchResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 
 class CreateBranch extends CreateRecord
 {
