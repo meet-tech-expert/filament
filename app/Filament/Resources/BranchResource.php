@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Pages;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Toggle;
 use App\Filament\Resources\BranchResource\Pages as BranchPages;
 
 class BranchResource extends Resource
@@ -36,23 +37,17 @@ class BranchResource extends Resource
                     ->label('Branch Name')
                     ->required(),
 
-                Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        '1' => 'Active',
-                        '0' => 'Inactive',
-                    ])
-                    ->default('1'),
+                  Toggle::make('status')
+                            ->label('Status')
+                            ->onColor(config('constants.statusIconColor.on.color'))
+                            ->offColor(config('constants.statusIconColor.off.color'))
+                            ->onIcon(config('constants.statusIconColor.on.icon'))
+                            ->offIcon(config('constants.statusIconColor.off.icon'))
+                            ->default(1)
+                            ->inline(),
+                
 
-                BelongsToSelect::make('added_by')
-                    ->label('Added By')
-                    ->relationship('addedByUser', 'name')
-                    ->required(),
-
-                BelongsToSelect::make('updated_by')
-                    ->label('Updated By')
-                    ->relationship('updatedByUser', 'name')
-                    ->required(),
+               
             ]);
     }
 

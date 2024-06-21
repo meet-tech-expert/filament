@@ -9,4 +9,16 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateBranch extends CreateRecord
 {
     protected static string $resource = BranchResource::class;
-}
+
+protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['added_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
+        return $data; 
+    }
+
+    protected function afterCreate(): void
+    {
+        $this->redirect($this->getResource()::getUrl('index'));
+    }
+} 
