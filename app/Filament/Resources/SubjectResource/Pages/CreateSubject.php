@@ -11,7 +11,7 @@ class CreateSubject extends CreateRecord
 {
     protected static string $resource = SubjectResource::class;
 
-      protected function mutateFormDataBeforeCreate(array $data): array
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['added_by'] = Auth::id();
         $data['updated_by'] = Auth::id();

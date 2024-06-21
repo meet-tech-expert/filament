@@ -10,6 +10,10 @@ return [
             1       => 'Active',
             2       => 'Inactive',
     ],
+    'typeSelectSubject' => [
+            1       => 'Select All',
+            2       => 'Unselect All',
+    ],
     'statusIconColor' => [
             'on'    => [
                 'icon'  => 'heroicon-c-check',

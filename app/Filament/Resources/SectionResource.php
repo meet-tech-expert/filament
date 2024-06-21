@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SectionResource\Pages;
 use App\Filament\Resources\SectionResource\RelationManagers;
-use App\Models\Section;
+use App\Models\Section as Msections;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables\Columns\TextColumn;
@@ -18,13 +18,13 @@ use Filament\Tables\Actions;
 use Filament\Forms\Components\BelongsToSelect;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-
-
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 
 
 class SectionResource extends Resource
 {
-    protected static ?string $model = Section::class;
+    protected static ?string $model = Msections::class;
 
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Section';
@@ -36,36 +36,29 @@ class SectionResource extends Resource
     {
         return $form
             ->schema([
-                BelongsToSelect::make('class_id')
-                    ->label('Class')
-                    ->relationship('class', 'class')
-                    ->required(),
+                Section::make([
 
-                TextInput::make('section')
-                    ->label('Section')
-                    ->required(),
+                    BelongsToSelect::make('class_id')
+                        ->label('Class')
+                        ->relationship('class', 'class')
+                        ->required(),
 
-                TextInput::make('short_name')
-                    ->label('Short Name'),
+                    TextInput::make('section')
+                        ->label('Section')
+                        ->required(),
 
-                Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        '1' => 'Active',
-                        '0' => 'Inactive',
-                    ])
-                    ->default('1'),
+                    TextInput::make('short_name')
+                        ->label('Short Name'),
 
-                BelongsToSelect::make('added_by')
-                    ->label('Added By')
-                    ->relationship('addedByUser', 'name')
-                    ->required(),
-
-                BelongsToSelect::make('updated_by')
-                    ->label('Updated By')
-                    ->relationship('updatedByUser', 'name')
-                    ->required(),
-            
+                    Toggle::make('status')
+                            ->label('Status')
+                            ->onColor(config('constants.statusIconColor.on.color'))
+                            ->offColor(config('constants.statusIconColor.off.color'))
+                            ->onIcon(config('constants.statusIconColor.on.icon'))
+                            ->offIcon(config('constants.statusIconColor.off.icon'))
+                            ->default(1)
+                            ->inline(),
+                ]), 
             ]);
     }
 

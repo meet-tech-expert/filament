@@ -12,7 +12,14 @@ class Subject extends Model
       protected $table = 'm_subjects';
 
       protected $fillable = [
-        'group', 'sub_name', 'sub_code', 'parent_subject', 'order', 'status', 'added_by', 'updated_by',
+            'group', 
+            'sub_name', 
+            'sub_code', 
+            'parent_subject', 
+            'order', 
+            'status', 
+            'added_by', 
+            'updated_by',
       ];
 
       public function addedByUser()
