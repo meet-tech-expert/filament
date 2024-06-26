@@ -26,7 +26,7 @@ return new class extends Migration
                   ->onDelete('cascade');
                    
             $table->foreign('sub_id')
-                  ->references('id')->on('m_sections')
+                  ->references('id')->on('m_subjects')
                   ->onDelete('cascade');       
 
             $table->foreign('added_by')

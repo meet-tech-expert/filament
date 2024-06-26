@@ -5,11 +5,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-
+use App\Traits\Auditable;
 
 class ClassMaster extends Model
-{
-    use HasFactory,SoftDeletes; 
+{ 
+    use HasFactory,SoftDeletes,Auditable; 
 
     protected $table = "m_classes";
    
@@ -37,4 +37,11 @@ class ClassMaster extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+   public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'm_class_subjects', 'class_id', 'sub_id')
+                    ->withTimestamps()
+                    ->withPivot('status', 'added_by', 'updated_by');
+    }
+    
 }

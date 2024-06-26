@@ -6,6 +6,9 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Observers\AuditObserver;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -25,7 +28,10 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        parent::boot();
+
+        Event::listen(Login::class, [AuditObserver::class, 'loggingIn']);
+        Event::listen(Logout::class, [AuditObserver::class, 'loggedOut']);
     }
 
     /**

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\Auditable;
 
 class AcademicYear extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,Auditable;
 
     protected $table = 'm_academic_years'; 
 

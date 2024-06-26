@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Filament\Resources\ClassSubjectResource\Pages;
-
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\ClassSubjectResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
@@ -14,8 +14,25 @@ class CreateClassSubject extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['added_by'] = Auth::id();
-        $data['updated_by'] = Auth::id();
-        return $data; 
+        return $data;
     }
+    protected function handleRecordCreation(array $data): Model
+    {
+      $subAry = $data['sub_id'];
+      $classId = $data['class_id'];
+      $lastCreatedModel = null;
+      
+      foreach ($subAry as $key => $value) {
+         $info['sub_id'] = $value;
+         $info['class_id'] = $classId;
+         $info['added_by'] = Auth::id();
+         $info['updated_by'] = Auth::id();
+
+         $lastCreatedModel = static::getModel()::create($info);
+      }
+
+      return $lastCreatedModel;
+
+    }
+
 }

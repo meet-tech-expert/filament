@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Auditable;
+
 
 class Subject extends Model
 {
-      use HasFactory;
+      use HasFactory,Auditable;
 
       protected $table = 'm_subjects';
 
@@ -36,4 +38,11 @@ class Subject extends Model
       {
         return $this->belongsTo(Subject::class, 'parent_subject')->where('parent_subject',null)->where('status','1');
       }
+      public function classes()
+    {
+        return $this->belongsToMany(ClassMaster::class, 'm_class_subjects', 'sub_id', 'class_id')
+                    ->withTimestamps()
+                    ->withPivot('status', 'added_by', 'updated_by');
+    }
+    
 }

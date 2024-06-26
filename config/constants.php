@@ -30,6 +30,12 @@ return [
             3 => "Discontinued",
             4 => "Relieved",
     ],
+     'typeLogStatus' => [
+            1 => "Resource",
+            2 => "Event",
+            3 => "Updated",
+            4 => "Relieved",
+    ],
     'typeBlood'  => [
         1 => "A-",
         2 => "A+",

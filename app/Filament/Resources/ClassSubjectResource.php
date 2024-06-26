@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClassSubjectResource\Pages;
@@ -11,15 +10,14 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput; 
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\BelongsToSelect;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
-
+use Filament\Forms\Set;
 
 class ClassSubjectResource extends Resource
 {
@@ -33,7 +31,7 @@ class ClassSubjectResource extends Resource
     {
         return $form
             ->schema([
-                Section::make([ 
+                Section::make([
                     TextInput::make('id')
                         ->label('ID')
                         ->required()
@@ -43,42 +41,29 @@ class ClassSubjectResource extends Resource
                         ->label('Select Class')
                         ->relationship('classMaster', 'class')
                         ->required(),
-                    Radio::make('group')
-                        ->label('Select Subject')
-                        ->options(config('constants.typeSelectSubject'))
-                        ->inline()
-                        ->afterStateUpdated(function (Set $set, ?string $state) {
-                            if ($state == '1') {
-                                // Check all checkboxes for sub_id
-                                $sub_ids = Subject::pluck('id')->toArray();
-                                $set('sub_id', $sub_ids);
-                            } else {
-                                // Clear sub_id selection if needed
-                                $set('sub_id', []);
-                            }
-                          })  
-                        ->inlineLabel(false)
-                        ->live(),
-                   CheckboxList::make('sub_id')
-                        ->label('Regular Subjects')
-                        ->relationship('subject', 'sub_id')
+                    CheckboxList::make('sub_id')
+                        ->label('Select Subjects')
                         ->options(function () {
                             return Subject::pluck('sub_name', 'id')->toArray();
                         })
                         ->columns(2)
-                        ->gridDirection('row'),
-
+                        ->searchable()
+                        ->searchPrompt('Search for a subject')
+                        ->noSearchResultsMessage('No subject found.')
+                        ->bulkToggleable()
+                        ->gridDirection('row')
+                        ->required(),
                     Toggle::make('status')
-                            ->label('Active')
-                            ->onColor(config('constants.statusIconColor.on.color'))
-                            ->offColor(config('constants.statusIconColor.off.color'))
-                            ->onIcon(config('constants.statusIconColor.on.icon'))
-                            ->offIcon(config('constants.statusIconColor.off.icon'))
-                            ->default(1)
-                            ->inline(),     
-                ]),    
-              
+                        ->label('Active')
+                        ->onColor(config('constants.statusIconColor.on.color'))
+                        ->offColor(config('constants.statusIconColor.off.color'))
+                        ->onIcon(config('constants.statusIconColor.on.icon'))
+                        ->offIcon(config('constants.statusIconColor.off.icon'))
+                        ->default(1)
+                        ->inline(),
+                ]),
             ]);
+
     }
 
     public static function table(Table $table): Table
@@ -88,12 +73,15 @@ class ClassSubjectResource extends Resource
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                TextColumn::make('ClassMaster.name')
+                TextColumn::make('classMaster.name')
                     ->label('Class')
                     ->sortable(),
-                TextColumn::make('sub_id')
-                    ->label('Subject ID')
-                    ->sortable(),
+                TextColumn::make('subjects')
+                    ->label('Subjects')
+                    ->sortable()
+                    ->formatStateUsing(function ($state, $record) {
+                        return implode(', ', $record->subjects->pluck('sub_name')->toArray());
+                    }),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->sortable(),
