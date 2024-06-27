@@ -5,11 +5,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\Auditable;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class ClassMaster extends Model
 { 
-    use HasFactory,SoftDeletes,Auditable; 
+    use HasFactory,SoftDeletes,LogsActivity; 
 
     protected $table = "m_classes";
    
@@ -22,6 +23,12 @@ class ClassMaster extends Model
         'added_by',
         'updated_by', 
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logOnly(['academic_id', 'class','class_code','short_name','status'])->logOnlyDirty()->dontSubmitEmptyLogs()->setDescriptionForEvent(fn(string $eventName) => "ClassMaster has been {$eventName}")->useLogName('ClassMaster');
+    }
 
     public function academicYear()
     {

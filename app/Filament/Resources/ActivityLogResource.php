@@ -3,14 +3,23 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActivityLogResource\Pages;
+use App\Filament\Resources\ActivityLogResource\RelationManagers;
 use App\Models\ActivityLog;
 use Filament\Forms;
+use Filament\Forms\Form; 
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Textarea;
+use Filament\Resources\Table\Columns\DateTimeColumn;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\BelongsToSelect;
 
 
 class ActivityLogResource extends Resource
@@ -20,50 +29,77 @@ class ActivityLogResource extends Resource
     protected static ?string $navigationLabel = 'Activity Log';
     protected static ?int $navigationSort = 2;
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Form $form): Form 
     {
-        return $form->schema([
-            // Add form fields if necessary
-        ]);
+        return $form 
+             ->schema([
+                Section::make([ 
+                    BelongsToSelect::make('causer_id')
+                    ->label('User')
+                    ->relationship('User', 'name')
+                    ->required(),
+                    TextInput::make('subject_id')->label('Subject')
+                    ->formatStateUsing(function (ActivityLog $record) {
+                        return $record->model_with_id;
+                    }),
+                    Textarea::make('description')->rows(2),
+                ])->columns(2),
+                Section::make([ 
+                    TextInput::make('type')->label('Type')
+                    ->formatStateUsing(function (ActivityLog $record) {
+                        return $record->type;
+                    }),
+                    TextInput::make('event')->label('Event')
+                        ->formatStateUsing(function ($state) {
+                        return ucfirst($state);
+                    }),
+                    TextInput::make('created_at')->label('Logged at')->disabled(),
+                ])->columns(2),
+                Section::make('Properties')
+                                ->schema([
+                   
+                ])->columns(2)     
+            ]);
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+              ->columns([
                 BadgeColumn::make('type')->label('Type')
                     ->colors([
                         'success' => fn ($state): bool => $state === 'Resource',
                         'danger' => fn ($state): bool => $state === 'Access',
-                    ])
+                    ]) 
                     ->formatStateUsing(function (ActivityLog $record) {
                         return $record->type;
                     }),
                 TextColumn::make('event')->label('Event')
                         ->formatStateUsing(function ($state) {
                         return ucfirst($state);
-                    }),                
-                TextColumn::make('description')
-                    ->label('Description')
-                    ->formatStateUsing(function (ActivityLog $record) {
-                        return $record->description;
                     }),
-                TextColumn::make('auditable_id')->label('Subject')
+                TextColumn::make('subject_id')->label('Subject')
                     ->formatStateUsing(function (ActivityLog $record) {
                         return $record->model_with_id;
                     }),
-                TextColumn::make('user.name')->label('User'),
-
-                TextColumn::make('created_at')->label('Created At')->dateTime(),
+                TextColumn::make('user.name')->label('User')
+                        ->formatStateUsing(function ($state) {
+                        return ucfirst($state);
+                    }),    
+                TextColumn::make('created_at')->label('Logged At')->dateTime(),
             ])
              ->filters([
                 SelectFilter::make('Type')
                 ->options(config('constants.typeLogStatus')),
-            ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
             ]);
-           
+          
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
@@ -74,4 +110,3 @@ class ActivityLogResource extends Resource
         ];
     }
 }
-

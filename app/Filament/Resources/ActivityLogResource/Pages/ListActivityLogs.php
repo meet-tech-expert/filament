@@ -16,4 +16,4 @@ class ListActivityLogs extends ListRecords
            // Actions\CreateAction::make(),
         ];
     }
-}
+} 

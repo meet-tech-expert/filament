@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\Auditable;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 
 class AcademicYear extends Model
-{
-    use HasFactory,SoftDeletes,Auditable;
+{ 
+    use HasFactory,SoftDeletes,LogsActivity;
 
     protected $table = 'm_academic_years'; 
 
@@ -27,6 +29,12 @@ class AcademicYear extends Model
         'from_date',
         'to_date',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logOnly(['from_date', 'to_date','status'])->logOnlyDirty()->dontSubmitEmptyLogs()->setDescriptionForEvent(fn(string $eventName) => "AcademicYear has been {$eventName}")->useLogName('AcademicYear');
+    }
 
     protected static function booted()
     {

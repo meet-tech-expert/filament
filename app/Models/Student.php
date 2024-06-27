@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use App\Traits\Auditable;
+
 
 
 class Student extends Model implements HasMedia
 {
-    use HasFactory,SoftDeletes,InteractsWithMedia,Auditable;
+    use HasFactory,SoftDeletes,InteractsWithMedia;
 
     protected $table = "m_students";
 
