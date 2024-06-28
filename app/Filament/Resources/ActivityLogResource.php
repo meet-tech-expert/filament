@@ -126,20 +126,31 @@ class ActivityLogResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                SelectFilter::make('type')
-                    ->options(config('constants.typeLogStatus')),
+                 SelectFilter::make('type')
+                    ->label('Type')
+                    ->options(config('constants.typeLogStatus'))
+                    ->query(function (Builder $query, array $data) {
+                        if (isset($data['value'])) {
+                            $accessEvents = ['login'];
+                            if ($data['value'] === 'Access') {
+                                $query->whereIn('event', $accessEvents);
+                            } else {
+                                $query->whereNotIn('event', $accessEvents);
+                            }
+                        }
+                    }),
                 SelectFilter::make('log_name')->label('Subject Type')
-                    ->options([
-                        'ClassMaster' => 'Class Master',
-                        'AcademicYear'  => 'Academic Year',
-                    ]),
+                    ->options(function () {
+                        return ActivityLog::query()
+                            ->select('log_name')
+                            ->distinct()
+                            ->pluck('log_name', 'log_name')
+                            ->toArray();
+                    }),
+
                 SelectFilter::make('event')
-                    ->options([
-                        'created' => 'Created',
-                        'updated' => 'Updated',
-                        'deleted' => 'Deleted',
-                        'login'   => 'Login',
-                    ]),
+                    ->options(config('constants.typeEvent')),
+
                 Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_at')
