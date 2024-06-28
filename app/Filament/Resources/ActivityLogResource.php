@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActivityLogResource\Pages;
@@ -69,18 +70,31 @@ class ActivityLogResource extends Resource
                     }
 
                     $properties = json_decode($record->properties, true);
-                    $fields = [];
-
-                    foreach ($properties as $key => $value) {
-                        $fields[] = TextInput::make("properties.{$key}")
-                            ->label(ucfirst(str_replace('_', ' ', $key)))
-                            ->default(is_array($value) ? json_encode($value) : (string)$value)
-                            ->disabled();
-                    }
+                    $fields = static::buildPropertyFields($properties);
 
                     return $fields;
                 })
         ];
+    }
+
+    protected static function buildPropertyFields(array $properties, string $prefix = 'properties'): array
+    {
+        $fields = [];
+
+        foreach ($properties as $key => $value) {
+            $fieldKey = $prefix . '.' . $key;
+            if (is_array($value)) {
+                $fields[] = Forms\Components\Fieldset::make(ucfirst(str_replace('_', ' ', $key)))
+                    ->schema(static::buildPropertyFields($value, $fieldKey));
+            } else {
+                $fields[] = TextInput::make($fieldKey)
+                    ->label(ucfirst(str_replace('_', ' ', $key)))
+                    ->default((string) $value)
+                    ->disabled();
+            }
+        }
+
+        return $fields;
     }
 
     public static function table(Table $table): Table
@@ -115,7 +129,6 @@ class ActivityLogResource extends Resource
                 SelectFilter::make('type')
                     ->options(config('constants.typeLogStatus')),
                 SelectFilter::make('log_name')->label('Subject Type')
-                    //make options dynamic
                     ->options([
                         'ClassMaster' => 'Class Master',
                         'AcademicYear'  => 'Academic Year',
