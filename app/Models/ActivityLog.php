@@ -12,9 +12,9 @@ use Illuminate\Support\Collection;
 
 class ActivityLog extends Activity implements ActivityContract
 {
-    public $guarded = []; 
+    public $guarded = [];
 
-    protected $table = 'm_activity_logs'; 
+    protected $table = 'm_activity_logs';
 
     protected $fillable = [
         'log_name',

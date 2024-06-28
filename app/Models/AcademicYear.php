@@ -11,10 +11,10 @@ use Spatie\Activitylog\LogOptions;
 
 
 class AcademicYear extends Model
-{ 
+{
     use HasFactory,SoftDeletes,LogsActivity;
 
-    protected $table = 'm_academic_years'; 
+    protected $table = 'm_academic_years';
 
     protected $fillable = [
         'from_date',
@@ -33,7 +33,11 @@ class AcademicYear extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['from_date', 'to_date','status'])->logOnlyDirty()->dontSubmitEmptyLogs()->setDescriptionForEvent(fn(string $eventName) => "AcademicYear has been {$eventName}")->useLogName('AcademicYear');
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn(string $eventName) => "AcademicYear has been {$eventName}")
+        ->useLogName('AcademicYear');
     }
 
     protected static function booted()
@@ -63,7 +67,7 @@ class AcademicYear extends Model
         if ($this->from_date instanceof \DateTime) {
             return $this->from_date->format('F, Y');
         }
-        return $this->from_date; 
+        return $this->from_date;
     }
 
     public function getFormattedToDateAttribute()
@@ -71,7 +75,7 @@ class AcademicYear extends Model
         if ($this->to_date instanceof \DateTime) {
             return $this->to_date->format('F, Y');
         }
-        return $this->to_date; 
+        return $this->to_date;
     }
 
     public function getStatusLabelAttribute()

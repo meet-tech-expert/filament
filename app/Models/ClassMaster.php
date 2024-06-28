@@ -9,11 +9,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
 class ClassMaster extends Model
-{ 
-    use HasFactory,SoftDeletes,LogsActivity; 
+{
+    use HasFactory,SoftDeletes,LogsActivity;
 
     protected $table = "m_classes";
-   
+
     protected $fillable = [
         'academic_id',
         'class',
@@ -21,13 +21,17 @@ class ClassMaster extends Model
         'short_name',
         'status',
         'added_by',
-        'updated_by', 
+        'updated_by',
     ];
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-        ->logOnly(['academic_id', 'class','class_code','short_name','status'])->logOnlyDirty()->dontSubmitEmptyLogs()->setDescriptionForEvent(fn(string $eventName) => "ClassMaster has been {$eventName}")->useLogName('ClassMaster');
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn(string $eventName) => "ClassMaster has been {$eventName}")
+        ->useLogName('ClassMaster');
     }
 
     public function academicYear()
@@ -50,5 +54,5 @@ class ClassMaster extends Model
                     ->withTimestamps()
                     ->withPivot('status', 'added_by', 'updated_by');
     }
-    
+
 }

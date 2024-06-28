@@ -7,16 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 
 class Student extends Model implements HasMedia
 {
-    use HasFactory,SoftDeletes,InteractsWithMedia;
+    use HasFactory,SoftDeletes,InteractsWithMedia,LogsActivity;
 
     protected $table = "m_students";
 
-   
+
     protected $fillable = [
         'first_name',
         'middle_name',
@@ -43,6 +44,15 @@ class Student extends Model implements HasMedia
         'added_by',
         'updated_by',
     ];
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn(string $eventName) => "Student has been {$eventName}")
+        ->useLogName('Student');
+    }
 
     public function academicYear()
     {
@@ -53,7 +63,7 @@ class Student extends Model implements HasMedia
     {
         return $this->belongsTo(ClassMaster::class, 'classid');
     }
-    
+
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');

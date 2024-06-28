@@ -32,9 +32,9 @@ return [
     ],
      'typeLogStatus' => [
             1 => "Resource",
-            2 => "Event",
-            3 => "Updated",
-            4 => "Relieved",
+            2 => "Model",
+            3 => "Access",
+            4 => "Notification",
     ],
     'typeBlood'  => [
         1 => "A-",
