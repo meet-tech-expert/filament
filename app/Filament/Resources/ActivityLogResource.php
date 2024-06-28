@@ -41,7 +41,7 @@ class ActivityLogResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(fn (Builder $query) => $query->orderBy('created_at','DESC') )
+        return $table
               ->columns([
                 TextColumn::make('type')->label('Type')->badge()->sortable()
                     ->colors([
@@ -66,6 +66,7 @@ class ActivityLogResource extends Resource
                     }),
                 TextColumn::make('created_at')->label('Logged At')->dateTime()->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
              ->filters([
                 SelectFilter::make('type')
                 ->options(config('constants.typeLogStatus')),
