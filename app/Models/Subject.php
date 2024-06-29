@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\LogsActivityCustom;
 
 
 class Subject extends Model
 {
-      use HasFactory;
+      use HasFactory,LogsActivityCustom;
 
       protected $table = 'm_subjects';
 

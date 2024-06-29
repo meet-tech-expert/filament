@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
+use App\Traits\LogsActivityCustom;
 
 
 class Student extends Model implements HasMedia
 {
-    use HasFactory,SoftDeletes,InteractsWithMedia,LogsActivity;
+    use HasFactory,SoftDeletes,InteractsWithMedia,LogsActivityCustom;
 
     protected $table = "m_students";
 
