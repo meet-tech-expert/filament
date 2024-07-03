@@ -23,6 +23,11 @@ class Fee extends Model
         'updated_by',
     ];
 
+    public function month()
+    {
+        return $this->belongsToMany(Month::class, 'm_fees_months','fees_id','month_id');
+    }
+
     public function feeMonths()
     {
         return $this->hasMany(FeeMonth::class, 'fees_id');
@@ -42,5 +47,12 @@ class Fee extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+     public function months()
+    {
+        return $this->belongsToMany(Month::class, 'm_fees_months', 'fees_id', 'month_id')
+                ->using(FeeMonth::class);
+    }
+
 
 }

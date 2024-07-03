@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FeeResource\Pages;
 use App\Models\Fee;
 use App\Models\FeeMonth;
+use App\Models\Month;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -26,26 +27,27 @@ class FeeResource extends Resource
     protected static ?string $model = Fee::class;
     protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Fee';
+     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $pluralModelLabel = 'Fee';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([ 
-                Section::make([
+{
+    return $form
+        ->schema([ 
+            Section::make([
                 BelongsToSelect::make('academic_id')
-                        ->label('Academic Year')
-                        ->relationship('academicYear', 'from_date')
-                        ->options(function () {
-                            return AcademicYear::all()->mapWithKeys(function ($academicYear) {
-                                $fromDate = date('F Y', strtotime($academicYear->from_date));
-                                $toDate = date('F Y', strtotime($academicYear->to_date));
-                                $label = "$fromDate - $toDate";
-                                return [$academicYear->getKey() => $label];
-                            })->toArray();
-                        })
-                        ->required(),
+                    ->label('Academic Year')
+                    ->relationship('academicYear', 'from_date')
+                    ->options(function () {
+                        return AcademicYear::all()->mapWithKeys(function ($academicYear) {
+                            $fromDate = date('F Y', strtotime($academicYear->from_date));
+                            $toDate = date('F Y', strtotime($academicYear->to_date));
+                            $label = "$fromDate - $toDate";
+                            return [$academicYear->getKey() => $label];
+                        })->toArray();
+                    })
+                    ->required(),
                 TextInput::make('type')
                     ->label('Fees Type')
                     ->required()
@@ -54,7 +56,7 @@ class FeeResource extends Resource
                     ->label('Description')
                     ->maxLength(200),
                 Checkbox::make('is_due')
-                    ->label('Due Fees Apply?')
+                    ->label('Due Fees Apply?') 
                     ->live(),    
                 TextInput::make('due_fees')
                     ->label('Due Fees')
@@ -67,10 +69,23 @@ class FeeResource extends Resource
                     ->visible(fn ($get) => $get('is_due')),
                 CheckboxList::make('month_id')
                     ->label('Select Months')
-                    ->options(config('constants.yearOfMonths'))->columns(2)
+                    ->options(function () {
+                        return Month::pluck('name', 'id')->toArray();
+                    })
                     ->default(function ($record) {
-                        return $record ? $record->feeMonths->pluck('month_id')->toArray() : [];
-                    }),
+                    if ($record && $record->exists) {
+                        return $record->months->pluck('id')->toArray();
+                    } else {
+                        return [];
+                    }
+                    })
+                    ->columns(2)
+                    ->searchable()
+                    ->searchPrompt('Search for a Month')
+                    ->noSearchResultsMessage('No matching Month.')
+                    ->bulkToggleable()
+                    ->gridDirection('row')
+                    ->required(),
                 Toggle::make('status')
                     ->label('Status')
                     ->onColor(config('constants.statusIconColor.on.color'))
@@ -79,16 +94,15 @@ class FeeResource extends Resource
                     ->offIcon(config('constants.statusIconColor.off.icon'))
                     ->default(1)
                     ->inline(),
-                ])    
-                
-            ]);
-    }
+            ])    
+        ]);
+}
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-
                 TextColumn::make('academicYear.from_date')
                 ->label('Academic Year')
                 ->formatStateUsing(function ($record) {
